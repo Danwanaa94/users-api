@@ -5,7 +5,7 @@ const getUsers =(req, res)=>{
     res.status(200).json({success:true, data:users});
 }
 
-//creating a users
+//creating a user
 const createUser =(req, res)=>{
     const newUser = req.body;
     users.push(newUser)
