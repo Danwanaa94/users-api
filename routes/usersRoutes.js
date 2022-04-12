@@ -1,12 +1,13 @@
-const {Router} =require("express")
+const {Router} =require("express");
 
-const {getUsers} =require("../controllers/usersController")
-const {createUser} = require("../controllers/usersController")
-const {getUser} = require("../controllers/usersController")
+const {getUsers} =require("../controllers/usersController");
+const {createUser} = require("../controllers/usersController");
+const {getUser} = require("../controllers/usersController");
+const auth = require("../middlewares/user.auth");
 
 const router =Router();
-router.route("/users").get(getUsers).post(createUser)
-router.get("/users/:id",getUser)
+router.route("/users").get( auth, getUsers).post(createUser)
+router.get("/users/:id", auth,getUser)
 
 
 
