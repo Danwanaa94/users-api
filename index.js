@@ -5,14 +5,17 @@ const usersRoute = require("./routes/usersRoutes")
 const path = require("path")
 const logger = require("./middlewares/user.logger")
 const booksRoute = require("./routes/booksRoute")
+const connectDB = require("./config/connectDB")
+require("dotenv").config()
 
-  
+  connectDB()
 const app = express()
 //middleware
 app.use(express.json());
 app.use(usersRoute)
 app.use(logger)
 app.use(booksRoute)
+
 
 // Home route
 app.get("/", (req, res)=>{

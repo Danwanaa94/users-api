@@ -12,7 +12,7 @@ booksHandlers.byCategory = (req, res, next)=>{
 booksHandlers.byAuthor= (req, res, next)=>{
     const category = req.query.category;
     if (author){
-        let _author =books.filter((b)=>b.author == author);
+        let _author =books.filter((b)=>b.author == _author);
         return res.status(200).json({succes:true, data:books})
     }
     next()

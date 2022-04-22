@@ -1,28 +1,67 @@
-const users =require("../data/users")
+
+const user = require("../models/userSchema");
+const bcrypt = require("bcrypt");
+const validate = require("../config/validator")
+const userhandler =require("../handlers/user.handler")
 
 //get all users
-const getUsers =(req, res)=>{
-    res.status(200).json({success:true, data:users});
+const getUsers =async(req, res)=>{
+    try{
+        let allUsers =await user.find({});
+        res.status(200).json({success:true, body:allUsers});
+    }catch (error){
+        res.status(500).json({success:false, body:error});
+    }
+   
 }
 
 //creating a user
-const createUser =(req, res)=>{
-    const newUser = req.body;
-    users.push(newUser)
-    res.status(200).json(users)
+const createUser =async(req, res)=>{
+    try{
+   //hashing password with bcrypt
+   const salt = await bcrypt.genSalt(10)
+   const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+   // validating a user
+   const {username,email,password}=req.body
+   const valid =await validate({username,email,password})
+   if(valid){
+
+   const newUser = new user({
+       username:req.body.username,
+       email:req.body.email,
+       password:hashedPassword
+
+   });
+
+   await newUser.save();
+   res.status(201).json({
+       _id:newUser._id,
+       username:newUser.username,
+       email:newUser.email
+   });
+}else{
+    res.status(400).json({
+        message:"Invalid data"
+    });
+}}catch(error){
+    let message = userhandler.handleErrors(error)
+}
 }
 
 //get user by id
 
-const getUser = (req, res)=>{
+const getUser =async(req, res)=>{
+    try{
     const userId = req.params.id;
-    const user = users.find((u)=>u.id==userId);
+    const user = await user.findById(userId)
 
-    if (!user) {
-        return res.status(400).json({success:false, message:"user not found"});
+        res.status(200).json({success:true, body:user});
+    }catch (error){
+        res.status(400).json({success:false, body:error});
     }
-    res.status(200).json({success:true, data:user});
-}
+    }
+   
 
 
 module.exports ={getUsers, createUser, getUser}
